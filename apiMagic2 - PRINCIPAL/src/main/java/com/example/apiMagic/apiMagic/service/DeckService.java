@@ -5,6 +5,8 @@ import com.example.apiMagic.apiMagic.model.Cards;
 import com.example.apiMagic.apiMagic.model.Commander;
 import com.example.apiMagic.apiMagic.repository.CardsRepository;
 import com.example.apiMagic.apiMagic.repository.CommanderRepository;
+import com.example.apiMagic.apiMagic.repository.DeckRepository;
+import com.example.apiMagic.apiMagic.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,9 @@ import java.util.Set;
 @Service
 public class DeckService {
 
+    private final CardsRepository cardsRepository;
+    private final UserRepository userRepository;
+    private final DeckRepository deckRepository;
     private ConsomeApi consomeApi;
     private ConverteDados converteDados;
     private CardsRepository repository;
@@ -25,15 +30,18 @@ public class DeckService {
     private DadosCards cards;
 
     @Autowired
-    public DeckService(ConsomeApi consomeApi, ConverteDados converteDados, CardsRepository repository, CommanderRepository commanderRepository) {
+    public DeckService(ConsomeApi consomeApi, ConverteDados converteDados, CardsRepository repository, CommanderRepository commanderRepository, CardsRepository cardsRepository, UserRepository userRepository, DeckRepository deckRepository) {
         this.consomeApi = consomeApi;
         this.converteDados = converteDados;
         this.repository = repository;
         this.commanderRepository = commanderRepository;
+        this.cardsRepository = cardsRepository;
+        this.userRepository = userRepository;
+        this.deckRepository = deckRepository;
     }
 
-    public ApiResponse getAllCommanders() {
-        var allLegendaryJson = consomeApi.obterDados("https://api.magicthegathering.io/v1/cards?supertypes=legendary&types=creature");
+    public ApiResponse getAllCommanders() throws Exception {
+        var allLegendaryJson = consomeApi.obterDadosComStream("https://api.magicthegathering.io/v1/cards?supertypes=legendary&types=creature");
         CardsResponseCommander allLegendaryResponse = converteDados.obterDadosCommander(allLegendaryJson, CardsResponseCommander.class);
         List<DadosCardsCommander> allLegendaryCardsList = allLegendaryResponse.getCards();
 
@@ -49,7 +57,7 @@ public class DeckService {
 
     public ApiResponse fetchAndSaveCommanderByName(String name) {
         try {
-            var json = consomeApi.obterDados("https://api.magicthegathering.io/v1/cards?supertypes=legendary&types=creature&name=" + name.replace(" ", "+"));
+            var json = consomeApi.obterDadosComStream("https://api.magicthegathering.io/v1/cards?supertypes=legendary&types=creature&name=" + name.replace(" ", "+"));
             CardsResponseCommander cardsResponseCommander = converteDados.obterDadosCommander(json, CardsResponseCommander.class);
             List<DadosCardsCommander> dadosCardsList = cardsResponseCommander.getCards();
 
@@ -59,7 +67,7 @@ public class DeckService {
                 GeraJson.salvarEmJson(cardsList, "deck.json");
                 return new ApiResponse(true, "Carta encontrada: ", dadosCardsList.stream().map(this::convertToEntityCommander).toList());
             } else {
-                var allLegendaryJson = consomeApi.obterDados("https://api.magicthegathering.io/v1/cards?supertypes=legendary&types=creature");
+                var allLegendaryJson = consomeApi.obterDadosComStream("https://api.magicthegathering.io/v1/cards?supertypes=legendary&types=creature");
                 CardsResponseCommander allLegendaryResponse = converteDados.obterDadosCommander(allLegendaryJson, CardsResponseCommander.class);
                 List<DadosCardsCommander> allLegendaryCardsList = allLegendaryResponse.getCards();
 
@@ -115,9 +123,9 @@ public class DeckService {
         return commander;
     }
 
-    public ApiResponse getDeckByCommanderColor() throws IOException {
+    public ApiResponse getDeckByCommanderColor() throws Exception {
         var commanderColor = commanderRepository.findColorFromCommander();
-        var json =  consomeApi.obterDados("https://api.magicthegathering.io/v1/cards?colorIdentity=" + commanderColor);
+        var json =  consomeApi.obterDadosComStream("https://api.magicthegathering.io/v1/cards?colorIdentity=" + commanderColor);
         CardsResponse cardsResponse = converteDados.obterDados(json, CardsResponse.class);
         Set<DadosCards> uniqueCards = new HashSet<>();
 
@@ -136,6 +144,3 @@ public class DeckService {
         return new ApiResponse(true, "Deck Criado: ", cardsList);
 
     }
-
-
-}
