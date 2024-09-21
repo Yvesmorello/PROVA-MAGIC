@@ -19,7 +19,7 @@ public class DeckController {
     private DeckService deckService;
 
     @GetMapping("/commanders")
-    public ResponseEntity<ApiResponse> commander() {
+    public ResponseEntity<ApiResponse> commander() throws Exception {
         ApiResponse response = deckService.getAllCommanders();
         return ResponseEntity.ok(response);
     }
@@ -38,7 +38,7 @@ public class DeckController {
     }
 
         @GetMapping("/cards")
-        public ResponseEntity<ApiResponse> cards() throws IOException {
+        public ResponseEntity<ApiResponse> cards() throws Exception {
             ApiResponse response = deckService.getDeckByCommanderColor();
 
             if(response.isSuccess()) {
