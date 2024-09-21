@@ -44,15 +44,6 @@ public class UserService {
         return new RecoveryJwtTokenDto(jwtTokenService.generateToken(userDetails));
     }
 
-//    public void createUser(CreateUserDto createUserDto) {
-//
-//        User newUser = User.builder()
-//                .email(createUserDto.email())
-//                .password(securityConfiguration.passwordEncoder().encode(createUserDto.password()))
-//                .roles(List.of(Role.builder().name(createUserDto.role()).build()))
-//                .build();
-//        userRepository.save(newUser);
-//    }
 public UserResponseDto createUser(CreateUserDto createUserDto) {
     User newUser = User.builder()
             .username(createUserDto.username())
@@ -62,7 +53,6 @@ public UserResponseDto createUser(CreateUserDto createUserDto) {
             .build();
     userRepository.save(newUser);
 
-    // Retorna UserResponseDto com detalhes do usuário criado e a senha criptografada
     return new UserResponseDto(newUser.getUsername(), newUser.getEmail(), newUser.getPassword());
 }
 }
