@@ -5,7 +5,6 @@ import com.example.apiMagic.apiMagic.model.Cards;
 import com.example.apiMagic.apiMagic.model.Commander;
 import com.example.apiMagic.apiMagic.repository.CardsRepository;
 import com.example.apiMagic.apiMagic.repository.CommanderRepository;
-import com.example.apiMagic.apiMagic.repository.DeckRepository;
 import com.example.apiMagic.apiMagic.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,14 +29,13 @@ public class DeckService {
     private DadosCards cards;
 
     @Autowired
-    public DeckService(ConsomeApi consomeApi, ConverteDados converteDados, CardsRepository repository, CommanderRepository commanderRepository, CardsRepository cardsRepository, UserRepository userRepository, DeckRepository deckRepository) {
+    public DeckService(ConsomeApi consomeApi, ConverteDados converteDados, CardsRepository repository, CommanderRepository commanderRepository, CardsRepository cardsRepository, UserRepository userRepository) {
         this.consomeApi = consomeApi;
         this.converteDados = converteDados;
         this.repository = repository;
         this.commanderRepository = commanderRepository;
         this.cardsRepository = cardsRepository;
         this.userRepository = userRepository;
-        this.deckRepository = deckRepository;
     }
 
     public ApiResponse getAllCommanders() throws Exception {
