@@ -20,7 +20,6 @@ public class DeckService {
 
     private final CardsRepository cardsRepository;
     private final UserRepository userRepository;
-    private final DeckRepository deckRepository;
     private ConsomeApi consomeApi;
     private ConverteDados converteDados;
     private CardsRepository repository;
